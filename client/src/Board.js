@@ -1,17 +1,11 @@
 import { h } from "preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
-import boardInfo from "./board.json";
 import { makeEmptyBoard, updateAt } from "./boardUtils";
-
-const {
-  dimensions: { width, height },
-  positionsToNumber,
-} = boardInfo;
 
 const CELL_SIZE = 30;
 
-const Block = ({ rowIndex, colIndex }) => (
+const Block = ({ rowIndex, colIndex, width }) => (
   <div
     key={`${rowIndex}-${colIndex}`}
     style={{
@@ -26,7 +20,7 @@ const Block = ({ rowIndex, colIndex }) => (
   />
 );
 
-const Input = ({ rowIndex, colIndex, highlighted, ...props }) => (
+const Input = ({ rowIndex, colIndex, highlighted, width, ...props }) => (
   <input
     type="text"
     style={{
@@ -51,7 +45,7 @@ const Input = ({ rowIndex, colIndex, highlighted, ...props }) => (
   />
 );
 
-const Valid = ({ rowIndex, colIndex, ...props }) => (
+const Valid = ({ rowIndex, colIndex, width }) => (
   <div
     key={`${rowIndex}-${colIndex}`}
     style={{
@@ -74,7 +68,6 @@ const Valid = ({ rowIndex, colIndex, ...props }) => (
       top: 0,
       left: 0,
     }}
-    {...props}
   />
 );
 
@@ -94,7 +87,7 @@ const Definition = ({ currentWordDefinition, position }) => (
   </div>
 );
 
-const WithNumber = ({ position, isMobile, children }) => (
+const WithNumber = ({ position, isMobile, positionsToNumber, children }) => (
   <div
     style={{
       position: "relative",
@@ -117,12 +110,6 @@ const WithNumber = ({ position, isMobile, children }) => (
       </span>
     ) : null}
   </div>
-);
-
-const allPositions = new Set(
-  boardInfo.words
-    .flatMap(({ positions }) => positions)
-    .map(([x, y]) => `${x}-${y}`)
 );
 
 const validationStuff = (board, foundWords) => {
@@ -149,8 +136,8 @@ const validationStuff = (board, foundWords) => {
   );
 };
 
-const getWordFromCoordinate = (colIndex, rowIndex) =>
-  boardInfo.words.find((wordInfo) =>
+const getWordFromCoordinate = (words, colIndex, rowIndex) =>
+  words.find((wordInfo) =>
     wordInfo.positions.some(([x, y]) => x === colIndex && y === rowIndex)
   );
 
@@ -182,10 +169,11 @@ const Board = ({
   onFocus,
   currentWordDefinition,
   isMobile,
+  allPositions,
 }) => {
-  const [board, setBoard] = useState(() =>
-    makeEmptyBoard(boardInfo.dimensions.width, boardInfo.dimensions.height)
-  );
+  const { dimensions: {width, height} , positionsToNumber } = boardInfo;
+
+  const [board, setBoard] = useState(() => makeEmptyBoard(width, height));
   const highlightedWordPositions = useMemo(
     () =>
       highlightedWord
@@ -263,11 +251,16 @@ const Board = ({
       if (allPositions.has(positionString)) {
         if (allValidPositions.has(positionString)) {
           return (
-            <WithNumber position={positionString} isMobile={isMobile}>
+            <WithNumber
+              position={positionString}
+              positionsToNumber={positionsToNumber}
+              isMobile={isMobile}
+            >
               <Valid
                 colIndex={colIndex}
                 rowIndex={rowIndex}
                 key={positionString}
+                width={width}
               >
                 {col}
               </Valid>
@@ -275,7 +268,7 @@ const Board = ({
           );
         } else {
           return (
-            <WithNumber position={positionString} isMobile={isMobile}>
+            <WithNumber position={positionString} positionsToNumber={positionsToNumber} isMobile={isMobile}>
               <Input
                 name={positionString}
                 key={positionString}
@@ -290,11 +283,12 @@ const Board = ({
                 ref={
                   currentPosition === positionString ? focusMeRef : undefined
                 }
+                width={width}
                 onFocus={(e) => {
                   e.preventDefault();
 
                   if (!isInHightlightedWord) {
-                    onFocus(getWordFromCoordinate(colIndex, rowIndex).word);
+                    onFocus(getWordFromCoordinate(boardInfo.words, colIndex, rowIndex).word);
                   }
 
                   if (currentPosition !== positionString) {
@@ -344,21 +338,24 @@ const Board = ({
       }
 
       return (
-        <Block key={positionString} colIndex={colIndex} rowIndex={rowIndex} />
+        <Block
+          key={positionString}
+          colIndex={colIndex}
+          rowIndex={rowIndex}
+          width={width}
+        />
       );
     })
   );
 
   return (
     <div
-      style={
-        {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "stretch",
-          maxWidth: `calc(min(${CELL_SIZE}px, 100vw / ${width} - .5vw) * (${width} + 2))`
-        }
-      }
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "stretch",
+        maxWidth: `calc(min(${CELL_SIZE}px, 100vw / ${width} - .5vw) * (${width} + 2))`,
+      }}
     >
       {isMobile ? (
         <Definition

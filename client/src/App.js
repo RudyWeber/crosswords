@@ -3,30 +3,13 @@ import { useEffect, useState } from "preact/hooks";
 
 import Board from "./Board";
 
-import boardInfo from "./board.json";
 import WordList from "./WordList";
-
-const pick = (key) => (obj) => obj[key];
-
-const partition = (predicate, xs) =>
-  xs.reduce(
-    ([ok, ko], x) => (predicate(x) ? [[...ok, x], ko] : [ok, [...ko, x]]),
-    [[], []]
-  );
-
-const [horizontalWords, verticalWords] = partition(
-  pick("horizontal"),
-  boardInfo.words
-);
-
-horizontalWords.sort(({number: a}, {number: z}) => +a - +z);
-verticalWords.sort(({number: a}, {number: z}) => +a - +z);
 
 const HorizontalSpacer = ({ width }) => <div style={{ width }} />;
 
 const isMobile = window.matchMedia?.("(max-width: 1125px)")?.matches;
 
-const App = ({ onCompleted }) => {
+const App = ({ onCompleted, boardInfo, horizontalWords, verticalWords, allPositions }) => {
   const [foundWords, setFoundWords] = useState(() => new Set());
   const [highlightedWord, setHighlightedWord] = useState("");
 
@@ -73,7 +56,7 @@ const App = ({ onCompleted }) => {
         highlightedWord={highlightedWord}
         foundWords={foundWords}
       />
-      <HorizontalSpacer width={30} />
+      { !isMobile ? <HorizontalSpacer width={30} /> : null }
       <div
         style={{
           display: "grid",
@@ -87,6 +70,7 @@ const App = ({ onCompleted }) => {
           foundWords={foundWords}
           onWordsFound={onWordsFound}
           onFocus={setHighlightedWord}
+          allPositions={allPositions}
           currentWordDefinition={
             (boardInfo.words.find(({ word }) => word === highlightedWord) || {})
               .def
