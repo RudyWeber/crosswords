@@ -45,7 +45,7 @@ const Input = ({ rowIndex, colIndex, highlighted, width, ...props }) => (
   />
 );
 
-const Valid = ({ rowIndex, colIndex, width }) => (
+const Valid = ({ rowIndex, colIndex, width, children }) => (
   <div
     key={`${rowIndex}-${colIndex}`}
     style={{
@@ -68,7 +68,9 @@ const Valid = ({ rowIndex, colIndex, width }) => (
       top: 0,
       left: 0,
     }}
-  />
+  >
+    {children}
+  </div>
 );
 
 const Definition = ({ currentWordDefinition, position }) => (
