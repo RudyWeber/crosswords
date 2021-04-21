@@ -55,13 +55,7 @@ const Valid = ({ rowIndex, colIndex, width, children }) => (
 
 const Definition = ({ currentWordDefinition, position }) => (
   <div
-    class={`${styles.definition} ${
-      position === "bottom"
-        ? styles["definition--bottom"]
-        : position === "top"
-        ? styles["definition--top"]
-        : ""
-    }`}
+    class={styles.definition}
   >
     {currentWordDefinition || "Start playing!"}
   </div>
