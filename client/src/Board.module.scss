@@ -1,0 +1,107 @@
+@import "./theme.scss";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.grid {
+  display: grid;
+  gap: 1px 1px;
+  outline: 2px solid black;
+  box-sizing: border-box;
+
+  &__block {
+    outline: thin solid white;
+    background-color: $blockColor;
+    box-sizing: border-box;
+  }
+
+  &__withNumberContainer {
+    position: relative;
+    box-sizing: border-box;
+
+    &__number {
+      position: absolute;
+      top: 0;
+      left: 2px;
+      pointer-events: none;
+      z-index: 20;
+      font-size: 0.7rem;
+    }
+  }
+
+  &__letterInput {
+    outline: thin solid black;
+    border-radius: 0;
+    border: none;
+    box-sizing: border-box;
+    text-transform: uppercase;
+    text-align: center;
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    &--highlighted {
+      background-color: $highlightedColor;
+    }
+  }
+
+  &__valid {
+    line-height: 100%;
+    outline: thin solid black;
+    border-radius: 0;
+    border: none;
+    box-sizing: border-box;
+    text-transform: uppercase;
+    display: grid;
+    place-items: center;
+    background-color: $validColor;
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
+.definition {
+  display: none;
+}
+
+.hintButton {
+  border: 2px solid black;
+  background-color: $blockColor;
+  padding: 10px 15px;
+  margin-top: 10px;
+  font-size: 1.2em;
+  align-self: center;
+}
+
+@media (max-width: 1124px) {
+  .grid {
+    &__withNumberContainer {
+      &__number {
+        font-size: 0.4rem;
+      }
+    }
+  }
+
+  .definition {
+    display: block;
+    outline: 2px solid black;
+    background-color: $blockColor;
+    padding: 10px 15px;
+    font-size: 1.2em;
+    text-align: center;
+
+    &--bottom {
+      margin-top: 10px;
+    }
+
+    &--top {
+      margin-bottom: 10px;
+    }
+  }
+}

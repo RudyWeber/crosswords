@@ -1,5 +1,4 @@
 import { h, render } from "preact";
-import "./index.css";
 import App from "./App";
 
 const pick = (key) => (obj) => obj[key];

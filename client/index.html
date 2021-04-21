@@ -19,6 +19,18 @@
     -->
     <title>React App</title>
     <link rel="stylesheet" href="./dist/index.css" />
+    <style>
+      body {
+        height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+          "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+          "Helvetica Neue", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -334,7 +346,11 @@
         },
       };
 
-      crosswords({rootId: "root", onCompleted: () => alert("you won!"), boardInfo });
+      crosswords({
+        rootId: "root",
+        onCompleted: () => alert("you won!"),
+        boardInfo,
+      });
     </script>
   </body>
 </html>

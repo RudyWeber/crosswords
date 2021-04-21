@@ -5,11 +5,17 @@ import Board from "./Board";
 
 import WordList from "./WordList";
 
+import * as styles from "./App.module.scss";
+
 const HorizontalSpacer = ({ width }) => <div style={{ width }} />;
 
-const isMobile = window.matchMedia?.("(max-width: 1125px)")?.matches;
-
-const App = ({ onCompleted, boardInfo, horizontalWords, verticalWords, allPositions }) => {
+const App = ({
+  onCompleted,
+  boardInfo,
+  horizontalWords,
+  verticalWords,
+  allPositions,
+}) => {
   const [foundWords, setFoundWords] = useState(() => new Set());
   const [highlightedWord, setHighlightedWord] = useState("");
 
@@ -42,29 +48,17 @@ const App = ({ onCompleted, boardInfo, horizontalWords, verticalWords, allPositi
   });
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: isMobile ? "column-reverse" : "row",
-      }}
-    >
+    <div class={styles.container}>
       <WordList
-        isMobile={isMobile}
         horizontalWords={horizontalWords}
         verticalWords={verticalWords}
         onSelectedWord={setHighlightedWord}
         highlightedWord={highlightedWord}
         foundWords={foundWords}
       />
-      { !isMobile ? <HorizontalSpacer width={30} /> : null }
-      <div
-        style={{
-          display: "grid",
-          placeItems: "center",
-        }}
-      >
+      <HorizontalSpacer width={30} />
+      <div class={styles.boardContainer}>
         <Board
-          isMobile={isMobile}
           boardInfo={boardInfo}
           highlightedWord={highlightedWord}
           foundWords={foundWords}

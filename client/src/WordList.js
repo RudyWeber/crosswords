@@ -1,74 +1,65 @@
 import { h } from "preact";
 
+import * as styles from "./WordList.module.scss";
+
+const List = ({ children }) => <ol class={styles.list}>{children}</ol>;
+
+const ListItem = ({
+  wordInfo: { word, def, number },
+  isFound,
+  isHighlighted,
+  onClick,
+}) => (
+  <li
+    key={def}
+    onClick={(e) => {
+      e.preventDefault();
+      isFound || onClick(word);
+    }}
+    class={`${styles["list__item"]} ${
+      isFound
+        ? `${styles["list__item--found"]}`
+        : isHighlighted
+        ? styles["list__item--highlighted"]
+        : ""
+    }
+`}
+  >
+    {number}.&nbsp;&nbsp;{def}
+  </li>
+);
+
 const WordList = ({
   horizontalWords,
   verticalWords,
   onSelectedWord,
   foundWords,
   highlightedWord,
-  isMobile,
 }) => {
   return (
-    <div
-      style={{
-        textAlign: isMobile ? "center" : "",
-      }}
-    >
+    <div class={styles.container}>
       <h1>➡ Across</h1>
-      <ol style={{ padding: 0, margin: 0, listStyle: "none" }}>
-        {horizontalWords.map(({ word, def, number }, index) => (
-          <li
-            key={def}
-            onClick={(e) => {
-              e.preventDefault();
-              foundWords.has(word) || onSelectedWord(word);
-            }}
-            style={{
-              borderBottom:
-                index === horizontalWords.length - 1
-                  ? "none"
-                  : "thin solid grey",
-              padding: 10,
-              backgroundColor: foundWords.has(word)
-                ? "lightgreen"
-                : word === highlightedWord
-                ? "lightblue"
-                : "transparent",
-              cursor: foundWords.has(word) ? "default" : "pointer",
-              textAlign: "left"
-            }}
-          >
-            {number}.&nbsp;&nbsp;{def}
-          </li>
+      <List>
+        {horizontalWords.map((wordInfo) => (
+          <ListItem
+            wordInfo={wordInfo}
+            onClick={onSelectedWord}
+            isFound={foundWords.has(wordInfo.word)}
+            isHighlighted={wordInfo.word === highlightedWord}
+          />
         ))}
-      </ol>
+      </List>
       <h1>⬇ Down</h1>
-      <ol style={{ padding: 0, listStyle: "none" }}>
-        {verticalWords.map(({ word, def, number }, index) => (
-          <li
-            key={def}
-            onClick={(e) => {
-              e.preventDefault();
-              onSelectedWord(word);
-              foundWords.has(word) || onSelectedWord(word);
-            }}
-            style={{
-              borderBottom:
-                index === verticalWords.length - 1 ? "none" : "thin solid grey",
-              padding: 10,
-              backgroundColor: foundWords.has(word)
-                ? "lightgreen"
-                : word === highlightedWord
-                ? "lightblue"
-                : "transparent",
-              cursor: foundWords.has(word) ? "default" : "pointer",
-              textAlign: "left"
-            }}
-          >
-            {number}.&nbsp;&nbsp;{def}
-          </li>
+      <List>
+        {verticalWords.map((wordInfo) => (
+          <ListItem
+            wordInfo={wordInfo}
+            onClick={onSelectedWord}
+            isFound={foundWords.has(wordInfo.word)}
+            isHighlighted={wordInfo.word === highlightedWord}
+          />
         ))}
-      </ol>
+      </List>
     </div>
   );
 };

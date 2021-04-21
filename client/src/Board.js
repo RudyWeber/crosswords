@@ -3,19 +3,19 @@ import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
 import { makeEmptyBoard, updateAt } from "./boardUtils";
 
+import * as styles from "./Board.module.scss";
+
 const CELL_SIZE = 30;
 
 const Block = ({ rowIndex, colIndex, width }) => (
   <div
     key={`${rowIndex}-${colIndex}`}
+    class={styles.grid__block}
     style={{
       gridRow: rowIndex + 1,
       gridColumn: colIndex + 1,
       width: `min(${CELL_SIZE}px, 100vw / ${width} - .5vw)`,
       height: `min(${CELL_SIZE}px, 100vw / ${width} - .5vw)`,
-      outline: "thin solid white",
-      backgroundColor: "#ff9f9f",
-      boxSizing: "border-box",
     }}
   />
 );
@@ -23,23 +23,15 @@ const Block = ({ rowIndex, colIndex, width }) => (
 const Input = ({ rowIndex, colIndex, highlighted, width, ...props }) => (
   <input
     type="text"
+    class={`${styles.grid__letterInput} ${
+      highlighted ? styles["grid__letterInput--highlighted"] : ""
+    }`}
     style={{
       gridRow: rowIndex + 1,
       gridColumn: colIndex + 1,
       width: `min(${CELL_SIZE}px, 100vw / ${width} - .5vw)`,
       height: `min(${CELL_SIZE}px, 100vw / ${width} - .5vw)`,
       fontSize: `min(${CELL_SIZE}px, 100vw / ${width} - .5vw)`,
-      outline: "thin solid black",
-      borderRadius: 0,
-      border: "none",
-      boxSizing: "border-box",
-      textTransform: "uppercase",
-      textAlign: "center",
-      zIndex: 10,
-      backgroundColor: highlighted ? "lightblue" : "transparent",
-      position: "absolute",
-      top: 0,
-      left: 0,
     }}
     {...props}
   />
@@ -48,25 +40,13 @@ const Input = ({ rowIndex, colIndex, highlighted, width, ...props }) => (
 const Valid = ({ rowIndex, colIndex, width, children }) => (
   <div
     key={`${rowIndex}-${colIndex}`}
+    class={styles.grid__valid}
     style={{
       gridRow: rowIndex + 1,
       gridColumn: colIndex + 1,
       width: `min(${CELL_SIZE}px, 100vw / ${width} - .5vw)`,
       height: `min(${CELL_SIZE}px, 100vw / ${width} - .5vw)`,
       fontSize: `min(${CELL_SIZE}px, 100vw / ${width} - .5vw)`,
-      lineHeight: "100%",
-      outline: "thin solid black",
-      borderRadius: 0,
-      border: "none",
-      boxSizing: "border-box",
-      textTransform: "uppercase",
-      display: "grid",
-      placeItems: "center",
-      backgroundColor: "lightgreen",
-      zIndex: 10,
-      position: "absolute",
-      top: 0,
-      left: 0,
     }}
   >
     {children}
@@ -75,39 +55,23 @@ const Valid = ({ rowIndex, colIndex, width, children }) => (
 
 const Definition = ({ currentWordDefinition, position }) => (
   <div
-    style={{
-      outline: "2px solid black",
-      backgroundColor: "#ff9f9f",
-      padding: "10px 15px",
-      marginTop: position === "bottom" ? 10 : "",
-      marginBottom: position === "top" ? 10 : "",
-      fontSize: "1.2em",
-      textAlign: "center",
-    }}
+    class={`${styles.definition} ${
+      position === "bottom"
+        ? styles["definition--bottom"]
+        : position === "top"
+        ? styles["definition--top"]
+        : ""
+    }`}
   >
     {currentWordDefinition || "Start playing!"}
   </div>
 );
 
 const WithNumber = ({ position, isMobile, positionsToNumber, children }) => (
-  <div
-    style={{
-      position: "relative",
-      boxSizing: "border-box",
-    }}
-  >
+  <div class={styles.grid__withNumberContainer}>
     {children}
     {positionsToNumber[position] ? (
-      <span
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 2,
-          pointerEvents: "none",
-          fontSize: isMobile ? ".2rem" : ".7rem",
-          zIndex: 20,
-        }}
-      >
+      <span class={styles.grid__withNumberContainer__number}>
         {positionsToNumber[position]}
       </span>
     ) : null}
@@ -173,7 +137,10 @@ const Board = ({
   isMobile,
   allPositions,
 }) => {
-  const { dimensions: {width, height} , positionsToNumber } = boardInfo;
+  const {
+    dimensions: { width, height },
+    positionsToNumber,
+  } = boardInfo;
 
   const [board, setBoard] = useState(() => makeEmptyBoard(width, height));
   const highlightedWordPositions = useMemo(
@@ -257,23 +224,23 @@ const Board = ({
               position={positionString}
               positionsToNumber={positionsToNumber}
               isMobile={isMobile}
+              key={positionString}
             >
-              <Valid
-                colIndex={colIndex}
-                rowIndex={rowIndex}
-                key={positionString}
-                width={width}
-              >
+              <Valid colIndex={colIndex} rowIndex={rowIndex} width={width}>
                 {col}
               </Valid>
             </WithNumber>
           );
         } else {
           return (
-            <WithNumber position={positionString} positionsToNumber={positionsToNumber} isMobile={isMobile}>
+            <WithNumber
+              position={positionString}
+              positionsToNumber={positionsToNumber}
+              isMobile={isMobile}
+              key={positionString}
+            >
               <Input
                 name={positionString}
-                key={positionString}
                 colIndex={colIndex}
                 rowIndex={rowIndex}
                 highlighted={isInHightlightedWord}
@@ -290,7 +257,10 @@ const Board = ({
                   e.preventDefault();
 
                   if (!isInHightlightedWord) {
-                    onFocus(getWordFromCoordinate(boardInfo.words, colIndex, rowIndex).word);
+                    onFocus(
+                      getWordFromCoordinate(boardInfo.words, colIndex, rowIndex)
+                        .word
+                    );
                   }
 
                   if (currentPosition !== positionString) {
@@ -352,55 +322,32 @@ const Board = ({
 
   return (
     <div
+      class={styles.container}
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "stretch",
         maxWidth: `calc(min(${CELL_SIZE}px, 100vw / ${width} - .5vw) * (${width} + 2))`,
       }}
     >
-      {isMobile ? (
-        <Definition
-          currentWordDefinition={currentWordDefinition}
-          position={"top"}
-        />
-      ) : null}
+      <Definition
+        currentWordDefinition={currentWordDefinition}
+        position={"top"}
+      />
       <div
+        class={styles.grid}
         style={{
-          display: "grid",
-          placeItems: "center",
+          gridTemplateColumns: `repeat(${width}) 1fr`,
+          gridTemplateRows: `repeat(${height}) 1fr`,
         }}
       >
-        <div
-          style={{
-            display: "grid",
-            gap: 1,
-            gridTemplateColumns: `repeat(${width}) 1fr`,
-            gridTemplateRows: `repeat(${height}) 1fr`,
-            outline: "2px solid black",
-            boxSizing: "border-box",
-          }}
-        >
-          {grid}
-        </div>
+        {grid}
       </div>
-      {isMobile ? (
-        <Definition
-          currentWordDefinition={currentWordDefinition}
-          position={"bottom"}
-        />
-      ) : null}
+      <Definition
+        currentWordDefinition={currentWordDefinition}
+        position={"bottom"}
+      />
       <button
         onClick={revealRamdomLetter}
         disabled={foundWords.size === boardInfo.words.length}
-        style={{
-          border: "2px solid black",
-          backgroundColor: "#ff9f9f",
-          padding: "10px 15px",
-          marginTop: 10,
-          fontSize: "1.2em",
-          alignSelf: "center",
-        }}
+        class={styles.hintButton}
       >
         💡 Need a hint?
       </button>

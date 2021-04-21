@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  flex-direction: row;
+}
+
+.boardContainer {
+  display: grid;
+  place-items: center;
+}
+
+@media (max-width: 1124px) {
+  .container {
+    flex-direction: column-reverse;
+  }
+}
