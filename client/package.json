@@ -6,7 +6,8 @@
     "preact": "^10.5.13"
   },
   "scripts": {
-    "start": "parcel watch ./src/index.js"
+    "start": "parcel serve ./index.html",
+    "build": "parcel build ./index.html --no-source-maps && cp ./dist/index.*.css ./dist/index.css && cp ./dist/index.*.js ./dist/index.js"
   },
   "eslintConfig": {
     "extends": [

@@ -78,8 +78,8 @@ const WithNumber = ({ position, isMobile, positionsToNumber, children }) => (
   </div>
 );
 
-const validationStuff = (board, foundWords) => {
-  return boardInfo.words.reduce(
+const validationStuff = (board, words, foundWords) => {
+  return words.reduce(
     ([validWords, allValidPositions], wordInfo) => {
       const wordPositions = wordInfo.positions;
 
@@ -160,7 +160,11 @@ const Board = ({
   const [currentPosition, moveTo] = useState("");
   const focusMeRef = useRef();
 
-  const [newValidWords, allValidPositions] = validationStuff(board, foundWords);
+  const [newValidWords, allValidPositions] = validationStuff(
+    board,
+    boardInfo.words,
+    foundWords
+  );
 
   const revealRamdomLetter = () => {
     const possibleWords = boardInfo.words.filter(
