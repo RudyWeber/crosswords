@@ -37,7 +37,7 @@ const WordList = ({
   highlightedWord,
 }) => {
   return (
-    <div class={styles.container}>
+    <div>
       <h3>Across</h3>
       <List>
         {horizontalWords.map((wordInfo) => (
