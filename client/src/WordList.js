@@ -38,7 +38,7 @@ const WordList = ({
 }) => {
   return (
     <div class={styles.container}>
-      <h1>➡ Across</h1>
+      <h3>Across</h3>
       <List>
         {horizontalWords.map((wordInfo) => (
           <ListItem
@@ -49,7 +49,7 @@ const WordList = ({
           />
         ))}
       </List>
-      <h1>⬇ Down</h1>
+      <h3>Down</h3>
       <List>
         {verticalWords.map((wordInfo) => (
           <ListItem

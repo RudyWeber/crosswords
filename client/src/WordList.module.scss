@@ -10,7 +10,7 @@
     cursor: pointer;
 
     & + & {
-      border-top: thin solid grey;
+      border-top: 1px solid $smoke;
     }
 
     &--highlighted {
@@ -21,11 +21,5 @@
       background-color: $validColor;
       cursor: default;
     }
-  }
-}
-
-@media (max-width: 1124px) {
-  .container {
-    text-align: center;
   }
 }

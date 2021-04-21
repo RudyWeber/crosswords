@@ -351,9 +351,9 @@ const Board = ({
       <button
         onClick={revealRamdomLetter}
         disabled={foundWords.size === boardInfo.words.length}
-        class={styles.hintButton}
+        class="btn btn-greyscale"
       >
-        💡 Need a hint?
+        <span class="text">Need a hint?</span> <span class="icon"></span>
       </button>
     </div>
   );
